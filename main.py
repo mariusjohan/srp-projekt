@@ -40,6 +40,13 @@ def train_fn(inputs:Iterable, targets:Iterable, val_inputs:Iterable, val_targets
     og val_inputs og val_targets er test sættet
     """
     
+    # Test netværkets nuværende performance
+    train_predictions = neural_net.predict(inputs)
+    train_acc = np.mean(train_predictions == targets)
+
+    val_predictions = neural_net.predict(val_inputs)
+    val_acc = np.mean(val_predictions == val_targets)
+
     for x_batch, y_batch in get_batch(inputs, targets, batch_size = 32, shuffle=True):
         # Beregn feedforward netværket
         neural_net_memory = neural_net.feedforward(x_batch)
@@ -47,25 +54,29 @@ def train_fn(inputs:Iterable, targets:Iterable, val_inputs:Iterable, val_targets
 
         # Backpropagate igennem netværket
         loss = neural_net.backprop(logits, y_batch, neural_net_memory)
+    
+    return loss, train_acc, val_acc
 
-    # Test netværkets nuværende performance
-    predictions = neural_net.predict(val_inputs)
-    return np.mean(predictions.all() == y_batch.all())
-
-# Gem alle accuracies her
-accuracy = []
+# Gem alle metrics her
+train_accuracy = []
+val_accuracy = []
+losses = []
 
 # Træn hele netværket på antal epochs
-epochs = 20
+epochs = 50
 for e in tqdm(range(epochs), position=0, desc="epoch", leave=False, colour="Green", ncols=80):
-    acc = train_fn(x_train, y_train, x_val, y_val)
-    accuracy.append(acc)
+    loss, train_acc, val_acc = train_fn(x_train, y_train, x_val, y_val)
+    train_accuracy.append(train_acc)
+    val_accuracy.append(val_acc)
+    losses.append(loss)
     
 # Import matplotlib for at kunne plotte accuracy grafen
 import matplotlib.pyplot as plt
 
 # Tilføj graf af testsættets accuracy
-plt.plot(accuracy,label='val accuracy')
+plt.plot(train_accuracy,label='train accuracy')
+plt.plot(val_accuracy,label='val accuracy')
+plt.plot(losses,label='train loss')
 
 plt.legend(loc='best')
 plt.grid()
