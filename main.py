@@ -27,9 +27,9 @@ x_train, y_train, x_val, y_val, X_test, y_test = load_dataset(flatten=True)
 # Initialiser det neurale netværk
 neural_net = NeuralNet(
     inputs_len = x_train.shape[1],
-    hidden_len = 8,
+    hidden_len = [32, 32],
     output_len = 10,
-    learning_rate = [0.1, 0.1]
+    learning_rate = [0.05, 0.05, 0.05]
 )
 
 def train_fn(inputs:Iterable, targets:Iterable, val_inputs:Iterable, val_targets:Iterable) -> int:
@@ -63,7 +63,7 @@ val_accuracy = []
 losses = []
 
 # Træn hele netværket på antal epochs
-epochs = 50
+epochs = 10
 for e in tqdm(range(epochs), position=0, desc="epoch", leave=False, colour="Green", ncols=80):
     loss, train_acc, val_acc = train_fn(x_train, y_train, x_val, y_val)
     train_accuracy.append(train_acc)

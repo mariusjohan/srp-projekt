@@ -12,15 +12,22 @@ class NeuralNet:
         self.network = [
             Dense(
                 inputs_len = self.inputs_len, 
-                outputs_len = self.hidden_len,
+                outputs_len = self.hidden_len[0],
                 learning_rate = hyperparameters['learning_rate'][0],
                 activation = None
             ),
             relu(),
             Dense(
-                inputs_len = self.hidden_len, 
-                outputs_len = self.output_len,
+                inputs_len = self.hidden_len[0],
+                outputs_len = self.hidden_len[1],
                 learning_rate = hyperparameters['learning_rate'][1],
+                activation = None
+            ),
+            relu(),
+            Dense(
+                inputs_len = self.hidden_len[1], 
+                outputs_len = self.output_len,
+                learning_rate = hyperparameters['learning_rate'][2],
                 activation = None
             )
         ]
